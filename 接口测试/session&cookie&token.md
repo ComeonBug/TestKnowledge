@@ -1,0 +1,5 @@
+cookie：浏览器接受服务器返回接口中的set_cookie设置cookie，并保存在电脑上，每个网址保存的cookie只作用于自己的网站
+
+seesion：数据存储到服务器端，只把关联数据的一个加密串放到cookie中标记，session可以基于cookie，也可以基于其他的query参数，用于关联服务器的相关数据
+
+token：一个用户请求时附带的请求字段，用于验证身份和权限

@@ -1,0 +1,9 @@
+HTTP/2 405 
+date: Sat, 21 Nov 2020 17:18:35 GMT
+content-type: text/html
+content-length: 178
+server: gunicorn/19.9.0
+allow: OPTIONS, POST
+access-control-allow-origin: https://httpbin.org
+access-control-allow-credentials: true
+
