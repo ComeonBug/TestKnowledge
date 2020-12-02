@@ -88,6 +88,10 @@ charles配置：开启【Throttle Setting】
 
 
 
+map remote > map local
+
+
+
 ## charles基础功能：
 
 1.导出为各式各样的文件，这些文件可以用于数据解析，导入到其他软件如postman里
@@ -104,9 +108,9 @@ charles配置：开启【Throttle Setting】
 
 4.高亮：
 
-<img src="charles%E4%BD%BF%E7%94%A8.assets/image-20201126104506248.png" alt="image-20201126104506248" style="zoom:33%;" />![image-20201126104618471](charles%E4%BD%BF%E7%94%A8.assets/image-20201126104618471.png)
+<img src="charles%E4%BD%BF%E7%94%A8.assets/image-20201126104506248.png" alt="image-20201126104506248" style="zoom:33%;" /> 
 
-<img src="charles%E4%BD%BF%E7%94%A8.assets/image-20201126104618471.png" alt="image-20201126104618471" style="zoom:33%;" />![image-20201126104731435](charles%E4%BD%BF%E7%94%A8.assets/image-20201126104731435.png)
+<img src="charles%E4%BD%BF%E7%94%A8.assets/image-20201126104618471.png" alt="image-20201126104618471" style="zoom:33%;" />
 
 <img src="charles%E4%BD%BF%E7%94%A8.assets/image-20201126104749483.png" alt="image-20201126104749483" style="zoom:33%;" />
 
@@ -130,3 +134,18 @@ charles的底层原理：
 
 2）代理
 
+
+
+SOCKS：一种技术，应用：
+
+比如：代理，
+
+websocked：应用层的一个协议
+
+也是应用层的，所以如果要是抓了http就没法抓websocked
+
+
+
+socket：七层模型的具体实现：socket编程
+
+socket是一个抽象接口，不是协议

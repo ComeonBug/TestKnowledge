@@ -8,7 +8,7 @@ curl的作用：
 
 3.可以方便开发者重放请求、修改参数调优、编写脚本
 
-
+curl很强大的，也可以查看邮箱
 
 curl是基于nc 的
 
@@ -30,11 +30,13 @@ post请求（-d后面加post的data）：curl -d "***" $url
 
 proxy挂代理（可以和charles等抓包工具配合使用）：curl -x "代理服务器地址" $curl
 
+使用curl很简单，不需要在额外的安装证书什么的
 
+引申：如果在python requests不想挂代理，不想下载证书，就可以使用
 
-curl很强大的，也可以查看邮箱
-
-
+```python
+requests.get('https://www.baidu.com', verify=False)
+```
 
 ## 举例：
 
