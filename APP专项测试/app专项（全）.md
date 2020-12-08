@@ -303,7 +303,6 @@ dumpsys查看所有的服务的
 ```bash
 $ adb shell dumpsys -l | wc -l
      103
-
 ```
 
 
