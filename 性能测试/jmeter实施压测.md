@@ -66,17 +66,24 @@ https://github.com/princeqjzh/iJmeter
 
 静默运行：
 
-关键tips：
-
-替换脚本的并发数:
-
 ```bash
-$ sed -Ei "" "s#num_threads\"\>([0-9]*)\<\/stringProp#num_threads\"\>${num}\<\/stringProp#g" templete_order_auto.jmx
+# 在 jmx 文件所在路径执行：
+nohup /jmeter所在路径/bin/jmeter -n -t orderservice.jmx -l test.jtl
+# 生成报告：
+/jmeter所在路径/bin/jmeter -g test.jtl -e -o web_report
 ```
 
 
 
+关键tips：
 
+替换脚本的并发数:
+
+MacOs：
+
+```bash
+$ sed -Ei "" "s#num_threads\"\>([0-9]*)\<\/stringProp#num_threads\"\>${num}\<\/stringProp#g" templete_order_auto.jmx
+```
 
 先摸底：看一下峰值
 

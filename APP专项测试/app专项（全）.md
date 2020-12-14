@@ -1,10 +1,95 @@
 [TOC]
 
+## app特性
 
+要测APP端的专项，要先了解移动端的一些特性，下面的这些特性都是指Android：
 
+Android的4大组件5大存储6大布局
 
+### 组件
 
-## 弱网测试：
+4大组件：activity、service、content provider、broadcast receiver
+
+#### activity
+
+activity：一个页面就是一个activity，可以通过adb logcat来获取，这个activity就是我们appium启动的cap里配置的【appActivity】，其实就是启动到哪个页面的意思，所以给我们测试用例又提供了一个思路：有些页面没必要一层一层通过各种操作来进入，直接拿到这个页面的activity进入就行
+
+```python
+driver.start_activity(package,activity)
+```
+
+activity的生命周期：话说，只要涉及到【生命周期】这个名词，其实顾名思义，不就是由生到死的过程吗，到那时要把“主人公”（这里是activity）套进去，而我们工作中遇到很多其他的生命周期，比如：【serverlet生命周期】、【线程生命周期】、【Vue生命周期】都是一个道理，就是让你说说这“主人公”怎么出生、经历了什么、然后消亡的过程，这样我们就很好说明activity的生命周期了：
+
+1）用户参与下的正常的生命周期：
+
+ - 调用OnCreate，创建activity，activity的状态为【已创建】
+ - 调用OnStart，此时的activity用户可见，activity的状态为【已开始】
+ - 调用onResume，此时activity一直与用户交互，activity的状态为【已恢复】
+ - 调用onPause，此时activity不在前台，activity的状态为【已暂停】
+    - 如果activity恢复到前台，会调用onResume
+ - 调用onStop，此时activity已结束运行，activity状态为【已停止】
+    - 完成一些重量级的资源的回收工作
+ - 调用onDestory，此时activity彻底结束，activity状态为【已销毁】
+    - 资源回收、释放
+
+#### service
+
+实现程序的后台运行
+
+#### content provider
+
+内容数据提供者
+
+#### broadcast receiver
+
+广播接收器：不同的应用、设备间都是通过broadcast receiver来通信
+
+这里要注意：如果activity长时间不在前台，而broadcast reveiver又长时间接收消息的话，容易发生ANR，ANR是指【主线程5S没有反应】，而如果broadcast receiver长时间执行，导致UI线程被阻塞，就会发生ANR
+
+### 布局
+
+android通过容器的布局属性来管理控件位置，而ios通过变量之间的相对关系完成控件的位置计算
+
+android的层级结构是一个定制的xml，叫【app source】，app source类似于dom树，表示app层级，代表界面里面所有控件树的结构，每个控件都有各种属性，比如：resource_id、content_desc，而由于他是类dom的，所以可以通过xpath定位
+
+引申点：
+
+dom（document object model：文档对象模型）用于表示界面的控件层级，界面的结构化描述，常见的格式为html、xml，核心元素为节点和属性
+
+xpath（xml path：xml路径语言）：用于xml的节点定位
+
+css selector（css选择器）：用于根据元素的属性或属性值选择元素
+
+举例：
+
+xpath定位：
+
+//* 任意元素、/ 孩子、//子子孙孙、.当前节点、..父亲节点
+
+```python
+driver.find_element_by_xpath("//div[@id='C']/../..")
+driver.find_element_by_xpath("//div[@id='B']/div")
+driver.find_element_by_xpath("//*[@text='登陆']")
+```
+
+css selector定位：
+
+#id、. class、>孩子、空格 子子孙孙、:nth-child(n) 第几个孩子
+
+```python
+driver.find_element_by_css_selector('#id_value')
+driver.find_element_by_css_selector('[id=id_value]')
+driver.find_element_by_css_selector('.class_value')   
+driver.find_element_by_css_selector("input[type='password']").send_keys('test')
+driver.find_element_by_css_selector('div#B>div')
+driver.find_element_by_css_selector('div#B div:nth-child(1)')
+```
+
+## 网络
+
+移动端切换4G、wifi、弱网
+
+### 弱网测试：
 
 弱网会产生的问题：
 
@@ -40,13 +125,13 @@ SwitchyOmega可以方便的帮我们切换到直接连接还是代理连接，�
 
 <img src="app%E4%B8%93%E9%A1%B9%EF%BC%88%E5%85%A8%EF%BC%89.assets/image-20201125165708987.png" alt="image-20201125165708987" style="zoom:33%;" />
 
-如果是app弱网：
+如果是app测试弱网：
 
-1）手机连接代理
+1）手机连接代理，charles设置【Throttle setting】
 
-​	tips：统一局域网、charles 
+​	tips：同一局域网、手机开启代理、charles 允许远程调试、安装证书、信任证书
 
-2）手机设置为3G
+2）或者直接设置为3G
 
 
 
@@ -56,23 +141,39 @@ SwitchyOmega可以方便的帮我们切换到直接连接还是代理连接，�
 
 操作过程：
 
-1.对应用进行盲点——monkey、maxim、appcrawler
+1.对应用进行盲点——monkey、maxim
 
 2.网络不佳——charles（Throttle Setting）
 
-3.数据不通——charles（）
+3.数据不通——charles（Throttle Setting 或者打上断点篡改返回，让返回缺斤少两）
 
 
 
 ## 兼容性测试
 
-移动设备、型号
+**兼容性测试是app测试的重点**
 
-工具：appcrawler综合性能：
+需要兼容不同的系统版本：android版本、ios版本
+
+需要兼容不同的厂商机型：华为（pro、mate）、三星、小米、OPPO、vivo
+
+不同的屏幕：屏幕大小、头帘、曲面屏、横竖屏
+
+可以使用商业的云测平台：testin之类，或者是搭建自己公司的设备实验室，通过OpenSTF这样的设备平台进行管理
+
+引申：现在的兼容性、自动化都把大力气放在安卓上，可能的原因有几点：
+
+1.安卓由于其开放性，导致了不同的厂商都很有自己的特性，不同的开发也有自己的特性，而且系统版本也有很多人没有升级过，很乱，所以问题就多，这样当然是主要去适配了
+
+2.ios app在代码开发上很规范，不然都没法通过app store的审核，然后用户的ios系统也一般保持在新版本，毕竟老版本很多功能不支持用户不得不升级，再加上项目组的人员大多数用的都是ios系统，在测试、开发、适用的过程其实已经把ios兼容的差不多了
+
+3.ios的自动化需要mac电脑，而有些公司······
 
 
 
-## webview性能
+## 性能
+
+### 内存
 
 底层原理：使用Linux性能相关的命令
 
@@ -100,6 +201,14 @@ cmd = "adb shell vmstat | tail -1 | awk '{print $5}'"
 res = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
 print(res.stdout.read())
 ```
+
+
+
+CPU｜GPU
+
+
+
+### webview
 
 
 
