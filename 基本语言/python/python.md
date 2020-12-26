@@ -41,7 +41,7 @@ a=[1,2,5,6,1]
 b=[]
 for i in a:
   if i not in b：
-  b.append(i)
+  	b.append(i)
 # b = list({}.fromkeys(a).keys())
 ```
 
@@ -77,7 +77,11 @@ l=[i*2 for i in range(1,101,2)]
 
 lambda表达式：
 
+map
 
+filter
+
+reduce
 
 ## 异常
 
@@ -125,7 +129,25 @@ python支持多继承
 
 面试题：
 
-*args、**kwargs：
+*args、**kwargs分别是什么？
+
+*args：位置参数，接受0-多个参数，args是一个元组
+
+**kwargs：关键字参数，接受多个参数，但是参数时键值对出现
+
+```python
+def test_arg(first,*args,**kwargs):
+  pass
+test_arg(1,2,3,4,a=5,b=6)
+# *args:接收:(2,3,4)
+# **kwargs:{'a':5,'b'=6}
+```
+
+
+
+
+
+​	
 
 
 
@@ -161,6 +183,16 @@ pytest、requests、selenium、appium、jsonpath、jsonschema、allure、pymysql
 反射
 
 原语
+
+
+
+
+
+原理：
+
+1.python垃圾回收机制
+
+2.python内存管理机制
 
 
 

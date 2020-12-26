@@ -787,6 +787,12 @@ driver.execute_script("document.getElementById('baidu').click()")
 
 ​	2）conftest.py+mark
 
+为什么封装？
+
+​	1）同样的代码比如：self.driver.find_element_by_id这样类似的出现3次以上就可以考虑封装了，
+
+​	2）
+
 ### 如何提升UI自动化的执行速度？
 
 1.pytest-xdist

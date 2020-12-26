@@ -294,7 +294,7 @@ commit;|rollback;
 
 记录锁（行锁）、间隙锁、next-key锁
 
-
+乐观锁、悲观锁
 
 #### Mysql视图
 
