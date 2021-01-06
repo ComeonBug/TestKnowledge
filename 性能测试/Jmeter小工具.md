@@ -4,6 +4,16 @@
 
 ![image-20201130145541850](../Untitled.assets/image-20201130145541850.png)
 
+这个录制也可以抓手机的包
+
+需要手机去安装证书，最方便的一个方式是：直接在jemeter目录下用python起一个服务：
+
+```python
+python HTTPClientServer 8889
+```
+
+
+
 2.Jmeter监控情况
 
 输入命令：`jconsole`
