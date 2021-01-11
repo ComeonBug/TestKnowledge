@@ -356,6 +356,360 @@ print(f'res2:{res2}')
 
 闭包：延伸了作用域的函数
 
+@ 这个符号叫【语法糖】
+
+```python
+# 装饰器写法
+def decoratefun1(fun):
+    print('decorate running')
+
+    def innerfun():
+        return fun()
+
+    return innerfun
+
+
+@decoratefun1
+def fun1():
+    print('fun1')
+
+
+fun1()
+```
+
+```python
+# 非装饰器写法
+def decoratefun2(fun):
+    print('decorate running')
+
+    def innerfun():
+        return fun()
+
+    return innerfun
+
+
+def fun2():
+    print('fun2')
+
+
+fun2 = decoratefun2(fun2)
+fun2()
+
+```
+
+上面两种写法的结果是一样的，但是执行的过程不一样，第一种使用装饰器在fun1函数定义的时候decoratefun1函数已经被调用了，而第二种非装饰器的方式，在函数fun2定义时decoratefun2函数没有被调用，验证的方法是注释掉【fun1()】【fun2 = decoratefun2(fun2)】【fun2()】这三句，然后发现运行第一种方式的时候，【decorate running】打印出来了，而第二种则没有打印
+
+
+
+装饰器在导入时回自动执行，如下两段代码证明：
+
+```python
+# 这是decoratetest.py文件
+def decoratefun(fun):
+    print('decorate running')
+
+    def innerfun():
+        return fun()
+
+    return innerfun
+
+
+@decoratefun
+def fun1():
+    print('fun1')
+```
+
+```python
+# 在python交互模式中输入【import decoratetest】,打印出了【decorate running】
+>>> import decoratetest
+decorate running
+```
+
+
+
+PEP 318 引入了【装饰器】
+
+PEP 3129 引入了【类装饰器】
+
+* PEP是什么【https://www.biaodianfu.com/python-pep.html】
+
+
+
+
+
+
+
+装饰器的作用，比如：
+
+绑定、包装、关键功能的额外的设置、验证等
+
+
+
+
+
+被装饰函数带参数
+
+被装饰函数带可变参数
+
+被装饰的函数有返回值
+
+
+
+- 装饰器带参数
+
+  
+
+```python
+
+```
+
+
+
+
+
+装饰器堆叠（一般外层是嵌套系统定义的，比如：@classmethod）
+
+
+
+系统内置的装饰器：
+
+
+
+【functlools.wraps()】这个wraps这个函数装饰器(实际是执行partial方法)，用在包装器函数发起时调用，可以保留被装饰函数的性质，比如
+
+```python
+foo.__name__
+```
+
+
+
+wraps常见的使用场景：加日志
+
+```python
+from functools import wraps
+import  datetime
+
+def logit(func):
+
+    @wraps(func)
+    def wraps_fun(*args, **kwargs):
+        print(f'{datetime.datetime.now()}:{func.__name__} start called')
+        func(*args, **kwargs)
+        print(f'{datetime.datetime.now()}:{func.__name__} end called')
+    return wraps_fun
+
+@logit
+def myfun():
+    sum = 0
+    for i in range(100000):
+        sum = sum * i
+
+
+myfun()
+```
+
+
+
+但是有一个缺点，就是不需要log的时候没法全部去除，不如logging模块好用
+
+
+
+另一个使用到的高级的装饰器：
+
+functools.lru_cache(maxsize = 128, typed = False)
+
+maxsize:设置缓存的内存占用值，超过这个值以后，结果会被释放
+
+typed:如果是true，则会把不同的参数类型得到的结果分开保存 
+
+```python
+import functools
+import timeit
+
+@functools.lru_cache()
+def fibonacci(n):
+    if n<2:
+        return n
+    return fibonacci(n-1)*fibonacci(n-2)
+
+if __name__=='__main__':
+    print(timeit.timeit('fibonacci(6)', setup='from __main__ import fibonacci'))
+```
+
+1.不加【@functools.lru_cache()】，运行时间为：4.288
+
+2.加上【@functools.lru_cache()】，运行时间为：0.087
+
+3.加上【@functools.lru_cache()】，运行时间为：0.273
+
+
+
+类装饰器（类当中的函数的装饰器）
+
+```python
+from functools import wraps
+
+class Myclass(object):
+    def __init__(self, var = 'init_var', *args, **kwargs):
+        self._v = var
+        super(Myclass, self).__init__(*args, **kwargs)
+    
+    def __call__(self, func):
+        # 类装饰器：类的函数装饰器
+        @wraps(func)
+        def wrapped_function(*args, **kwargs):
+            func_name = func.__name__
+            print(func_name,' been called')
+            return func(*args, **kwargs)
+        return wrapped_function
+    
+
+def my_fun():
+    pass
+
+
+Myclass(100)(my_fun)()
+```
+
+
+
+装饰类
+
+```python
+# 装饰类
+def decorator_class(aClass):
+    class newClass(object):
+        def __init__(self, args):
+            self.times = 0
+            self.wrapped = aClass(args)
+        
+        def display(self):
+            self.times += 1
+            print('run times:',self.times)
+            self.wrapped.display()
+    return newClass
+
+@decorator_class
+class MyClass(object):
+    def __init__(self, number):
+        self.number = number
+    
+    def display(self):
+        print('number is ', self.number)
+
+
+num = MyClass(6)
+for i in range(5):
+    num.display()
+```
+
+
+
+
+
+应用1:为函数添加属性
+
+```python
+def attr(**kwargs):
+    def decorate(f):
+        for k in kwargs:
+            setattr(f, k, kwargs[k])
+        return f
+    return decorate
+
+
+@attr(version='1.0', authod='bule')
+def mymethod():
+    pass
+
+print(getattr(mymethod,'__name__'))
+print(getattr(mymethod,'version'))
+print(getattr(mymethod,'authod'))
+```
+
+
+
+应用2:函数参数观察器
+
+```python
+def trace(f):
+    def decorate_funciton(*args, **kwargs):
+        print(f, args, kwargs)
+        res = f(*args, **kwargs)
+        print(res)
+    return decorate_funciton
+
+@trace
+def myfun(greet, name):
+    return f'{greet},{name}'
+
+myfun('hello','Tom')
+# 打印结果为：
+# <function myfun at 0x7f917526d670> ('hello', 'Tom') {}
+# hello,Tom
+```
+
+
+
+应用3:单例
+
+
+
+python自带的装饰器:
+
+```python
+@classmethod
+@statcimethod
+@property
+@*.setter
+@*.deleter
+```
+
+
+
+举例：
+
+@dataclass：判断对象是否相同（python3.7）
+
+```python
+from dataclasses import dataclass
+
+@dataclass
+class Myclass(object):
+    var_a : str
+    var_b : str
+
+
+obj1 = Myclass('x','y')
+obj2 = Myclass('x','y')
+print(obj1 == obj2)
+```
+
+如果不用dataclass装饰器的话，实现代码为：
+
+这里可以体会到装饰器的用处：把判断、封装、验证、数据库操作 等可以丢到装饰器里
+
+
+
+```python
+class Myclass(object):
+    def __init__(self, var_a, var_b):
+        self.var_a = var_a
+        self.var_b = var_b
+    
+    def __eq__(self, other):
+        if self.__class__ != other.__class__:
+            return False
+        return (self.var_a, self.var_b) == (other.var_a, other.var_b)
+
+
+obj1 = Myclass('x','y')
+obj2 = Myclass('x','y')
+print(obj1 == obj2)
+```
+
+
+
 
 
 ## 魔术方法：
@@ -387,7 +741,21 @@ print(p1-p2)
 
 
 
-​	
+
+
+
+
+```python
+__getAttr__
+__get__
+__getattr...
+__eq__
+__init__
+__setattr__
+
+```
+
+
 
 
 
@@ -415,6 +783,19 @@ pytest、requests、selenium、appium、jsonpath、jsonschema、allure、pymysql
 
 
 2.快速排序
+
+
+
+
+
+## 类
+
+类定义建议写法，最好明确写出继承Object的新式类，这样兼容性比较高：
+
+```python
+class Myclass(Object):
+  pass
+```
 
 
 
@@ -551,6 +932,12 @@ python的【一切皆对象】理念在【闭包】这个概念中体现的淋�
 6.好的问题是成功的一半
 
 7.好的风格（PEPE9）
+
+
+
+# Tips
+
+-O：这个选项会让所有的assert失效
 
 
 
