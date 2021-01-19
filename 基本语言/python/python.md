@@ -786,9 +786,17 @@ pytest、requests、selenium、appium、jsonpath、jsonschema、allure、pymysql
 
 
 
+## 对象
 
+数据+行为
+
+对象=实体
 
 ## 类
+
+类：用来描述对象
+
+
 
 类定义建议写法，最好明确写出继承Object的新式类，这样兼容性比较高：
 
@@ -799,7 +807,71 @@ class Myclass(Object):
 
 
 
-## 面试题：
+经典类、新式类，从python3开始更加明显的体现了【一切皆对象】
+
+
+
+新式类的属性和方法：
+
+静态字段（也叫类的属性）
+
+普通字段（也叫实例属性）
+
+```python
+__init__:只有一个目的：接受实例化时传进来的参数
+__dict__：获取属性列表
+```
+
+
+
+```python
+class Human(object):
+    live = True
+
+    def __init__(self, name):
+        self.name = name
+
+
+man = Human('yadang')
+women = Human('xiawa')
+
+print(man.__dict__)
+print("*"*4)
+print(Human.__dict__)
+print(man.live)
+man.live = False
+print(man.live)
+print(man.__dict__)
+print(women.live)
+# 打印结果为：
+# {'name': 'yadang'}
+# ****
+# {'__module__': '__main__', 'live': True, '__init__': <function Human.__init__ at 0x7faa06263700>, '__dict__': <attribute '__dict__' of 'Human' objects>, '__weakref__': <attribute '__weakref__' of 'Human' objects>, '__doc__': None}
+# True
+# False
+# {'name': 'yadang', 'live': False}
+# True
+```
+
+
+
+上面的代码得出的结论：
+
+1.实例化时不会实例化类属性，即实例的内存中没有分配空间给类属性，通过实例调用的类属性访问的实际上还是类对象的内存空间中的值
+
+2.如果修改实例的类属性值，其实是把修改后的属性值写到实例的内存中间中，以后通过这个实例调用的类属性就是指向的自己的内存空间的而不是指向类的，所以这个值的改变是不会影响到类属性的
+
+
+
+## 面向对象的三大特性：
+
+
+
+
+
+# 面试题：
+
+
 
 *args、**kwargs有什么区别：
 
