@@ -166,3 +166,24 @@ JDBC请求压测：
 
 ![image-20210512010252608](jmeter%E5%9F%BA%E7%A1%80.assets/image-20210512010252608.png)
 
+
+
+2.JDBC Request
+
+1）配置参数区：
+
+pool写JDBC Connection Configuration中配置的pool名
+
+2）sql语句区：
+
+insert ***
+
+3）变量配置区
+
+sql中如果有?的变量，就在这里配置
+
+变量的值用逗号隔开
+
+变量的类型
+
+![image-20210512011746752](jmeter%E5%9F%BA%E7%A1%80.assets/image-20210512011746752.png)
