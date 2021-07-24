@@ -22,7 +22,13 @@ jmeter基于java的
 
 Jmeter：
 
-下载一个zip包直接解压即可
+下载一个source 的zip包直接解压即可（ps：启动的时候需要系统有java环境）
+
+
+
+http://www.jmeter.com.cn/
+
+
 
 
 
@@ -187,3 +193,51 @@ sql中如果有?的变量，就在这里配置
 变量的类型
 
 ![image-20210512011746752](jmeter%E5%9F%BA%E7%A1%80.assets/image-20210512011746752.png)
+
+
+
+
+
+
+
+Csv loader是在初始化的时候就加载到内存里的，jmeter的内存是有限的
+
+实际场景中，Jemter做压测的时候很少加复杂的as
+
+sert校验，复杂的assert很影响性能
+
+
+
+Jmeter原理介绍
+
+实际上所有界面的配置都会存在一个jmx文件中
+
+
+
+
+
+Jmeter最重要的几个配置文件：jmeter.properties（这个用的最多，里面是jmeter的一些默认值）、user.properties（用户自定义的一些，如果重复，就替换jmeter.properties）、system.properties
+
+
+
+
+
+jmeter分布式：rmi方式
+
+具体的配置在user.properties里
+
+
+
+-Jmeter代码里其实也有setupXXX、teardownXXX之类功能的方法
+
+
+
+Lesson4-01
+
+jmeter核心配置元件
+
+Jmeter运行机制
+
+Jmeter时序关系
+
+Jmeter核心模块
