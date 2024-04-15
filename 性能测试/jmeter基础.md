@@ -144,6 +144,12 @@ TPS：每秒处理的事务｜请求数
 
 
 
+文件上传的接口：
+
+
+
+
+
 
 
 JDBC请求压测：
@@ -187,3 +193,95 @@ sql中如果有?的变量，就在这里配置
 变量的类型
 
 ![image-20210512011746752](jmeter%E5%9F%BA%E7%A1%80.assets/image-20210512011746752.png)
+
+选query type为：select statement
+
+可以提取变量为count
+
+后续如果在其他的sample中要使用的话，就可以用【${count_1}】取第一个，【${count_2}】取第二个，这样的方式来取
+
+![](jmeter%E5%9F%BA%E7%A1%80.assets/image-20210512013054575.png)
+
+delete语句：
+
+使用的Query Type为：update statement
+
+sql例如：delete from `jmeter_class`.`user` where `username`=testsuer
+
+
+
+
+
+Jmeter的线程组：
+
+1.取样器结束后要做什么动作
+
+2.线程属性
+
+线程数：就是要模拟的用户数
+
+每秒启动的线程数
+
+3.调度配置
+
+![image-20210512231915940](jmeter%E5%9F%BA%E7%A1%80.assets/image-20210512231915940.png)
+
+
+
+setup线程组、teardown线程组
+
+
+
+
+
+jmx本质上其实是配置文件，不是程序代码
+
+Java Request是什么？
+
+1.纯java程序，实现了Jmeter中提供的接口——JavaSamplerClient
+
+2.将java程序集成到JMeter中，通过Java Request实现调度
+
+3.java程序实现与压测‘目标’的交互
+
+4.Jmeter来控制java程序的生命周期、并发调度、收集结果报告等处理
+
+
+
+Java request实现知识点：
+
+1.java request执行类必须继承AbstractJavaSamplerClient抽象类
+
+2.各种post、get、delete请求需要使用java的HTTPClient来实现
+
+3.接口请求之间的交互在java代码中来控制
+
+4.HttpResponse中的json返回值解析使用的java中的json解析库来进行解析——》java jars下、jmeter ext下
+
+5.除来最终的运行和数据交互需要进入jmeter，基本上已经俨然变成了java程序开发活动
+
+
+
+java编辑器：Intellij Idea
+
+打包工具：Maven
+
+jar包存放的位置；《jmeter path》/lib/ext
+
+
+
+java request环境配置：
+
+1.jdk1.8
+
+2.maven
+
+3.export jmeter_path=**
+
+4.Intellij Idea
+
+
+
+
+
+其实，java request是提供了一个思路：Jmeter提供了接口，其他程序继承、实现、调用 接口
