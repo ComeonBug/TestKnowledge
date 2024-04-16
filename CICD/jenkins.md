@@ -1,4 +1,4 @@
-如何把自动化测试和jenkins结合起来？
+# 如何把自动化测试和jenkins结合起来？
 
 1.测试也要建一个jenkins item
 
@@ -20,7 +20,7 @@ ps:jenkins不能放在docker里
 
 
 
-jenkins怎么和docker结合？
+# jenkins怎么和docker结合？
 
 jenkins启动一个容器
 
@@ -66,7 +66,7 @@ pytest **  或者 sh ***.sh
 
 
 
-python-docker基础镜像：
+# python-docker基础镜像：
 
 dockerfile
 
@@ -185,9 +185,154 @@ docker image给测试，测试发布到测试环境，发布完要自动化测�
 
 
 
+# jenkins通过k8s启动
+
+```yml
+apiVersion: v1
+kind: deployment
+metadata: 
+	name: jenkins
+---
+apiVersion: v1
+kind: ServicesAccount
+metadata:
+	name: jenkins
+	namespace: jenkins
+	
+---
+apiVersion: rbac.authorization.k8s.io/v1betal
+kind: clusterRoleBinding
+metadata:
+	name: jenkins-crd
+roleRef:
+	apiGroup: rbac.authorization.k8s.io
+	kind: clusterRole
+	name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: jenkins
+  namespace: 
+  
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-master
+  namespace: jenkins-master
+spec:
+ replicas: 1   # jenkins没法起多个副本
+ selector:
+   matchLables:
+   		devops: jenkins-master
+   temlate:
+     metadata:
+       lables:
+         devops: jenkins-master
+     spec:
+       nodeSelector:
+         jenkins: 'true'
+       servicesAccount: jenkins # pod需要使用的服务账号
+       initContainers: # 初始化容器，和containers是同一级别
+       - name: fix-permissions
+         image: busybox
+         command: ['sh','-c','chown -R 1000:1000 /var/jenkins_home']
+         securityContext:
+           privileged: true
+         volumeMounts:
+         - name: jenkinshome
+           mountPath: /var/jenkins_home
+       containers:
+       - name: jenkins
+         image: jenkinssci/blueocean:1.23.2
+         imagePullPolicy: IfNotPresent
+         ports:
+         - name: http # jenkins Master web服务端口
+           containerPort: 8080
+         - name: slavelistener # jenkins master 供未来 slave 连接的接口
+           containerPort: 50000
+         volumeMounts:     # 和外层的volumns配对，volumeMount是属于一个container的
+         - name: jenkinshome
+           mountPath: /var/jenkins_home
+           env:
+           - name: JAVA_OPTS
+             value: '****一串value***'
+       vloumes:     # 内层的volumeMounts使用，所以它是和containers、initContainers同级的
+       - name: jenkinshome
+         hostPath:
+           path: /var/jenkins_home/
+    
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins
+  namespace: jenkins
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  - name: slavelistener
+    port: 50000
+    tartgetPort: 50000
+  type: ClusterIP
+  selector:
+    devops: jenkins-master
+    
+---
+apiversion: extensions/v1betal
+kind: Ingress
+metadata:
+  name: jenkins-web
+  namespace: jenkins
+spec:
+  rlues:
+  - host: jenkins.luffy.com
+    http:
+      paths:
+      - bachend:
+          serviceName: jenkins
+          servicePort: 8080
+       	path: /
+```
 
 
 
+# gitlab和jenkins结合
+
+1、启动jenkins 容器
+
+2、部署postgress（gitlab依赖）
+
+3、部署redis（gitlab依赖）
+
+4、启动gitlab容器
+
+注意点：配置ingress、secret、postgress和redis的服务发现、
+
+5、配置host解析
+
+6、配置coredns
+
+7、jenkins gitlab插件，配置，git提供token即可
+
+8、jenkins新建——源码管理——填入仓库地址——选定分支
+
+9、gitlab配置触发——项目里配置webhook（jenkins的）——jenkins生成一个secret给gitlab配webhook的同时）
+
+
+
+# jenkins流水线
+
+写pipline配置文件
+
+单分支流水线:
+
+​	gitlab更新后自动触发jenkins流水线
+
+多分支流水线（项目实际应用多）：
+
+​	需要jenkins配置扫描触发器，定时去扫描
 
 
 
