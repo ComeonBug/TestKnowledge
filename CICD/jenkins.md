@@ -332,7 +332,49 @@ spec:
 
 多分支流水线（项目实际应用多）：
 
-​	需要jenkins配置扫描触发器，定时去扫描
+​	需要jenkins配置扫描触发器，定时去扫描，这种情况，就不需要在gitlab配置webhook了
+
+jenkins file：随着版本代码提交了，jenkins配置流水线脚本SCM 
 
 
+
+# jenkins集成k8s
+
+1、jenkins安装k8s插件
+
+2、jenkins系统配置里【配置集群】，配置k8s、pod模版（配置多个容器，一个tools、一个jnlp）
+
+3、tools工具（doocker容器镜像），专门来做环境准备、工具下载等的工作
+
+4、另一个容器jnlp，专门用来连接k8s的slave节点
+
+5、编辑jenkins file文件
+
+
+
+# jenkins集成sonarQube
+
+sonarQube代码扫描
+
+1、jenkins安装sonarQube插件
+
+2、jenkins里配置联通sonarQube，需要sonarQube提供token（这样jenkins就能获取到SonaQube执行结果了）
+
+3、jenkins集成k8s的pod配置文件中，增加启动sonarQube容器部分
+
+3、编辑jenkins file文件文件，增加sonarQube部分
+
+
+
+# jenkins集成robetFramework
+
+
+
+1、jenkins安装robetFramework插件
+
+2、jenkins里配置联通robetFramework
+
+3、jenkins集成k8s的pod配置文件中，增加安装robetFramework部分
+
+3、编辑jenkins file文件文件，增加robetFramework部分
 

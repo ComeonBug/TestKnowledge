@@ -426,3 +426,11 @@ ORM（Object-Relational Mapping）型：用python数据类型代替数据库表
 优点：更好操作。毕竟可以通过代码操作
 
 使用sqlalchemy库
+
+
+
+
+
+\1. 执行如下sql查询alert_spaces表是否有重复数据
+
+SELECT * FROM ( SELECT COUNT ( * ) AS num,alert_space_id  FROM alert_spaces GROUP BY alert_space_id ) a  WHERE num > 1;
