@@ -1,3 +1,11 @@
+容器
+
+
+
+
+
+
+
 `docker run -d --name influxdb --network grafana -p 8086:8086 -v ${pwd}:/var/lib/influxdb/ influxdb`
 
 
@@ -23,3 +31,9 @@ docker run -it -p 3306:3306 -e **传参**
 pstree -p 1 
 
 ps -ef
+
+
+
+面试题：
+
+https://zhuanlan.zhihu.com/p/571931032

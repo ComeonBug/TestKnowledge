@@ -12,3 +12,7 @@ numpy
 
 中国AI开发平台市场报告：https://www.sensecore.cn/frost.pdf
 
+
+
+标量、向量
+

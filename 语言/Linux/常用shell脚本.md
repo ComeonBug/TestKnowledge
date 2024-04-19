@@ -1,6 +1,6 @@
-1.自动化测试shell脚本：
+# 自动化测试shell脚本：
 
-自动在设备上跑monkey命令：
+## 自动在设备上跑monkey命令：
 
 ```bash
 #! /bin/bash
@@ -10,7 +10,7 @@ for device in devices;do
 done
 ```
 
-自动跑test case：
+## 自动跑test case：
 
 ```bash
 [ -e /tmp/fifo_3 ] || mkfifo /tmp/fifo_3
@@ -38,7 +38,7 @@ exec 3<&-
 
 
 
-2.性能测试shell脚本
+# 性能测试shell脚本
 
 ps：Linux下该脚本ok，macOS下不可
 
@@ -86,7 +86,7 @@ echo "stress testing done!"
 
 
 
-3.dockerfile脚本
+# dockerfile脚本
 
 dockerfile:
 
@@ -105,7 +105,9 @@ RUN yum install -u python git python-34-setuptools python-34-devel.x86_64
 ENTRYPOINT ["/root/entrypoint/sh"]
 ```
 
-entrypoint.sh
+
+
+# entrypoint.sh
 
 ```bash
 #! /bin/bash
@@ -123,7 +125,7 @@ done
 
 
 
-4.jenkins构建脚本
+# jenkins构建脚本
 
 ```bash
 . ~/.bash_profile
@@ -133,7 +135,9 @@ rm -rf pytests.xml
 pytest -v test/web_ui.py -o junit_family=xuint2 --juint-xml=pytests.xml
 ```
 
-app打包
+
+
+# app打包
 
 ```bash
 . ~/.bash_profile
@@ -141,7 +145,9 @@ cd AndoridSampleApp
 sh gradlew clean assemleDebug
 ```
 
-安装、运行测试用例、生成报告：
+
+
+# 安装、运行测试用例、生成报告：
 
 ```bash
 . ~/.bash_profile
