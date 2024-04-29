@@ -188,3 +188,19 @@ kafka采取 **拉取** 模式
 
 
 
+## kafka发送方式
+
+sync、async、oneway
+
+sync：同步的方式
+
+逐条发送，求队列InFlightRequest中永远最多有一条数据
+
+async，异步的方式
+
+可以运行生产者以batch的形式push数据，这样会极大的提高broker的性能，但是这样会增加丢失数据的风险，以batch的方式推送数据可以极大的提高处理效率，kafka producer可以将消息在内存中累计到一定数量后作为一个batch发送请求。batch的数量大小可以通过producer的参数（batch.num.messages）控制。通过增加batch的大小，可以减少网络请求和磁盘IO的次数
+
+oneway：
+
+oneway是只顾消息发出去而不管死活，消息可靠性最低，但是低延迟、高吞吐，这种对于某些完全对可靠性没有要求的场景还是适用的，即request.required.acks设置为0。
+

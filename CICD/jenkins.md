@@ -378,3 +378,75 @@ sonarQube代码扫描
 
 3、编辑jenkins file文件文件，增加robetFramework部分
 
+
+
+jenkins怎么定制邮件模板
+
+1、安装邮件插件：Email Extension 
+
+2、增加一个模板的全局配置：
+
+​	配置名词、模板的html内容
+
+​	同样的，模板代码部分可以通过 ${变量名} 来引用jenkins的变量
+
+![image-20240426153317179](jenkins.assets/image-20240426153317179.png)
+
+
+
+3、使用这个邮件配置
+
+在jenkinsfile文件中添加发送邮件step
+
+```shell
+stage('email'){
+        echo "测试发送邮件"
+        // 设置生成模板文件
+        configFileProvider([configFile(fileId: '6615581f-719a-4edc-9f3a-161438441471',
+                                       targetLocation: 'email.html',
+                                       variable: 'failt_email_template')]) {
+            //  读取模板
+            template = readFile encoding: 'UTF-8', file: "${failt_email_template}"
+            //  发送邮件
+            emailext(subject: '任务执行失败',
+                     attachLog: true,
+                     recipientProviders: [requestor()],
+                     to: 'yuhuan.shi@kikatech.com',
+                     body: """${template}""")
+        }
+    }
+  }
+
+```
+
+或者
+
+```shell
+stage('test') {
+    steps {
+        echo 'hello'
+        // error 'build failed'
+    }
+    post {
+        success {
+            emailext (
+              subject: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+              to: "nick@xxxxx.com",
+              body: """<p>SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+    <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+              recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            )
+        }
+        failure {
+            emailext (
+              subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+              to: "nick@xxxxx.com",
+              body: """<p>FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+                <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
+              recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            )
+        }
+    }
+}
+```
+
