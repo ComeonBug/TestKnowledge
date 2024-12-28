@@ -434,3 +434,25 @@ ORM（Object-Relational Mapping）型：用python数据类型代替数据库表
 \1. 执行如下sql查询alert_spaces表是否有重复数据
 
 SELECT * FROM ( SELECT COUNT ( * ) AS num,alert_space_id  FROM alert_spaces GROUP BY alert_space_id ) a  WHERE num > 1;
+
+
+
+# SQL语句
+
+不熟悉的一些句子
+
+```sql
+# 设置stu表里所有的class列值都为'初三'
+Update stu set class='初三';
+SELECT * FROM Customers WHERE PostalCode IS NOT NULL;
+# insert into values
+INSERT INTO Customers ( CustomerName, Address, City, PostalCode, Country) VALUES ( 'Hekkan Burger', 'Gateveien 15', 'Sandnes', '4306', 'Norway');
+SELECT * FROM Customers ORDER BY Country, City;
+DELETE FROM Customers WHERE Country = 'Norway';
+SELECT count(*) FROM Products where Price = 18;
+SELECT * FROM Orders left join Customers ON Orders.CustomerID=Customers.CustomerID;
+SELECT * FROM Orders right join Customers ON Orders.CustomerID=Customers.CustomerID;
+SELECT count(CustomerID), Country FROM Customers group by Country;
+SELECT count(CustomerID), Country FROM Customers group by Country ORDER BY count(CustomerID) desc;
+```
+

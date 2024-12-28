@@ -4,17 +4,11 @@
 
 解释型 通用编程语言
 
-
-
-
-
 ## python是否区分大小笑
 
 区分
 
 python对大小写敏感、对缩进、格式敏感，最好使用4个空格，不建议使用tab键
-
-
 
 ## python数据类型有哪些，哪些可变哪些不可变
 
@@ -110,6 +104,8 @@ b = 1%2  #b=1
 
 
 ## equal和==的区别
+
+python中==是调用对象的__ eq __ () 方法，equal是对象定义的一个方法，他们对于比较的内容视各自定义的情况而定，如果没有显式定义__ eq __ ()方法比较的是内存地址，即==比较的是内存地址
 
 
 
@@ -322,7 +318,37 @@ os.remove('xxx.txt')
 
 迭代器：可以遍历或者迭代的对象
 
-任意对象，只要定义了__ next __()方法，就是一个迭代器
+任意对象，只要实现了__ iter __ 方法 和 __ next __()方法，就是一个迭代器
+
+__ iter __ 方法 返回一个特殊的迭代器对象，这个迭代器对象实现了 __ next __()方法，用于返回序列里的下一个元素
+
+```python
+class RangeIterator:
+    def __init__(self, start, end):
+        self.current = start
+        self.end = end
+
+    def __iter__(self):
+        # 返回迭代器对象本身
+        return self
+
+    def __next__(self):
+        # 当前值如果小于end，则返回当前值，并更新当前值为下一个值
+        if self.current < self.end:
+            num = self.current
+            self.current += 1
+            return num
+        # 如果当前值已经达到或超过end，则停止迭代并抛出StopIteration异常
+        else:
+            raise StopIteration
+
+# 使用自定义迭代器
+start, end = 0, 5
+range_iterator = RangeIterator(start, end)
+
+for num in range_iterator:
+    print(num)
+```
 
 
 
@@ -342,7 +368,23 @@ os.remove('xxx.txt')
 
 特别的点在于，【生成器】只能迭代一次
 
-举例
+生成器在函数中使用yield实现，每次迭代是，生成器函数都会在yield表达式处暂停，下次迭代从该处开启
+
+```python
+def range_generator(start, end):
+    """创建一个生成器，用于生成从start到end（不包括end）的整数"""
+    i = start
+    while i < end:
+        yield i
+        i += 1
+
+# 使用生成器表达式
+start, end = 0, 5
+gen = range_generator(start, end)
+
+for num in gen:
+    print(num)
+```
 
 
 
@@ -458,7 +500,41 @@ print(a.name)
 
 ## python的异常处理
 
-try-except-else
+try-except-else-finally
+
+try：执行的语句，捕获这句语句执行时是否有异常发生
+
+except：后面跟上要捕获的异常，可以是具体异常名（如：ZeroDivisionError）也可以是所有异常（Exception），捕获异常以后执行里面的语句快
+
+else：没有异常发生时，接着执行的语句快
+
+finally：不论有没有异常发生，都执行的语句快
+
+
+
+```python
+try:
+    # 尝试执行的代码
+    result = 10 / 0
+except ZeroDivisionError:
+    # 如果发生了 ZeroDivisionError，则执行这里的代码
+    print("不能除以零！")
+else:
+    # 如果没有异常发生，则执行这里的代码
+    print("除法成功执行。")
+finally:
+    # 无论是否发生异常，都会执行这里的代码
+    print("这是 finally 块，总会被执行。")
+```
+
+```python
+try:
+    # 可能会引发任何类型的异常的代码
+    result = 1 / 0
+except Exception as e:
+    # 捕获所有非系统退出类的异常
+    print(f"发生了一个异常：{e}")
+```
 
 
 
@@ -470,7 +546,9 @@ pythonpath：一个环境变量
 
 通过pythonpath来检查目录是是否有要导入的模块
 
-python解释器 通过 pythonpath 来决定 导入哪个模块
+python解释器 通过 pythonpath 来决定 导入哪个模块，是导入默认的还是我们自己写的，可以自己写包，然后把路径添加到pythonpath中，导入的就是我们自己写的包了
+
+在大型项目开发时，pythonpath也可以定义项目依赖的路径，使得项目可以在不同的机器下运行而不需要重新配置环境变量
 
 
 
@@ -480,11 +558,31 @@ python模块就是包含了python代码的文件，可以是函数、也可以�
 
 常见的几个内置模块：
 
-操作系统os、数学操作math、系统sys、随机random
+操作系统os、数学操作math、系统sys、随机random、re、time、pytest、selenium、request、allure、yaml、json、logging、SSHLibrary
+
+
 
 
 
 ## python内存管理机制
+
+内存管理主要是在这3部分：内存的分配、使用、回收
+
+
+
+内存的分配：python解释器的【python内存管理器】会自动进行内存的分配
+
+​	**pymalloc**：python私有内存分配器，适用于小型对象的分配
+
+​	malloc：系统分配器，适用于大型对象
+
+​	pool：内存池，一个预分配的内存区域，用于存储特定大小的对象，可以减少内存碎片，提升内存分配效率，python为每种数据类型维护了内存池，这些内存池根据对象的大小进行划分
+
+
+
+内存的使用：注意内存泄漏，即对象的引用计数没有正确减少，导致对象无法被垃圾回收
+
+​	内存的优化：使用生成器而不是列表、使用collection模块中的优化数据类型、weakref模块创建弱引用，避免循环引用
 
 
 
@@ -502,11 +600,39 @@ python模块就是包含了python代码的文件，可以是函数、也可以�
 
 ## python垃圾回收机制
 
+2种机制
+
+第一种：引用计数机制
+
+当一个对象被创建后，其引用计数计为1，当对象被引用后，计数+1，当引用被删除后，计数-1，当计数为0后，python解释器调用该对象的__ del __方法，释放该对象所占有的内存，该内存被回收
+
+但是如果遇到循环引用的情况，计数机制无法做到垃圾回收，需要gc垃圾回收器来清理
+
+以及，像整数这样的不可变内置类型，是特殊的，通过【整数对象缓存】技术来实现
+
+python会选择一定范围的整数，如-5～256，python会事先缓存这个范围内的整数在内存中，如果新建这个范围内的整数对象时，不会新开内存，会重用已建好的整数对象
+
+字符串、元组类似
+
+
+
+第二种：分代收集机制
+
+这个机制是假定新一代比老一代更快被回收，这里根据创建对象的时间分为不同的【代】
+
+新创建的对象为第0代，第一次垃圾回收后仍存活的对象，为1代，以此类推
+
+先回收新一代的对象内存，然后再回收老一代的
+
+
+
+## collections模块中的优化数据结构
+
 
 
 ## python中如何实现多线程
 
-GIL锁
+
 
 ## python进程、线程、协程的区别
 
@@ -517,6 +643,18 @@ GIL锁
 
 
 ## python套接字
+
+
+
+## python GIL锁
+
+
+
+## 反射
+
+
+
+## 元编程
 
 
 
@@ -535,28 +673,46 @@ Pytest 是一个流行的 Python 测试框架，它提供了多种装饰器来�
    - 备注：常用于给测试用例添加日志打印或其他无需返回值的设置。
 
 3. **`@pytest.mark.parametrize()`**
+   
    - 功能：用于参数化测试用例，可以为单个测试用例或一组测试用例提供参数。
-   - 备注：非常适合于需要多种不同输入值进行测试的场景。
-
+- 备注：非常适合于需要多种不同输入值进行测试的场景。
+   
 4. **`@pytest.mark.skip()`**
+   
    - 功能：用于跳过测试用例的执行。
-   - 备注：通常在调试期间或当测试用例暂时无法运行时使用。
-
+- 备注：通常在调试期间或当测试用例暂时无法运行时使用。
+   
 5. **`@pytest.mark.skipif()`**
    - 功能：根据条件选择性地跳过测试用例。
    - 备注：当给定的条件为真时，对应的测试用例将被跳过。
 
 6. **`@pytest.mark.xfail()`**
+   
    - 功能：预期测试用例执行失败。
-   - 备注：用于标记那些已知失败的测试用例，这样它们就不会在测试结果中被当作意外失败。
-
-7. **`@pytest.mark.run()`**
+- 备注：用于标记那些已知失败的测试用例，这样它们就不会在测试结果中被当作意外失败。
+   
+7. **`@pytest.mark.run(order=1)`**
+   
    - 功能：控制测试用例的执行顺序。
-   - 备注：需要安装 pytest-ordering 插件，通过设置不同的顺序值来控制测试用例的执行顺序。
-
+- 备注：需要安装 pytest-ordering 插件，通过设置不同的顺序值来控制测试用例的执行顺序。
+   
 8. **`@pytest.mark.rerun_failures()`**
+   
    - 功能：失败重跑机制，允许失败的测试用例重新运行多次。
+   
    - 备注：可以配置重跑次数，有助于确保测试失败不是由于瞬时的基础设施问题导致的。
+   
+   - pip install pytest-rerunfailures
+   
+   - 使用：
+   
+     ```python
+     import pytest
+     
+     @pytest.mark.rerun_failures(reruns=3, reruns_delay=1)
+     def test_example():
+         # 测试代码
+     ```
 
 这些装饰器可以单独使用，也可以组合使用，以满足不同的测试需求。通过合理使用这些装饰器，可以提高测试的效率和可维护性。
 

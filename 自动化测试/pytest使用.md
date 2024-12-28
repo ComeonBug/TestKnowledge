@@ -63,6 +63,52 @@ class TestPipline(object):
 
 
 
+# fixture
+
+注意点：
+
+1、params、参数request、返回值request.param 这都是固定写法
+
+2、加入id后，case名回显示为id名
+
+3、params里列表的话，testcase使用这个fixture函数的话，可以获得fixture函数的所有params执行后的返回值
+
+```python
+import pytest
+
+@pytest.fixture(scope='module', params=['param1', 'param2', 10, 20], ids=['p1', 'p2', 'num10', 'num20'])
+def test_data(request):
+    """返回一个参数化的 test_data 对象，并提供自定义的 ID。"""
+    request.param = str(request.param) + '111'
+    return request.param
+
+def test_example(test_data):
+    """使用参数化 fixture，并展示自定义 ID。"""
+    print(f"Running with test data: {test_data}")
+    assert isinstance(test_data, (str, int))  # 确保 test_data 是 str 或 int 类型
+```
+
+运行结果：
+
+```shell
+test_a.py::test_example[p1] Running with test data: param1111
+PASSED
+test_a.py::test_example[p2] Running with test data: param2111
+PASSED
+test_a.py::test_example[num10] Running with test data: 10111
+PASSED
+test_a.py::test_example[num20] Running with test data: 20111
+PASSED
+```
+
+
+
+4、fixture有scope：session、muddle、class、function，设定的范围内所有case运行前执fixture函数
+
+5、fixture scope设置为class，这个testclass里每个case都写了fixture函数名，则在class前执行一次fixture，也只执行一次哦，如果testclass的第2个case写了fixture函数名，则这个fixture在第二个testcase执行之前执行，是在第一个case后哦
+
+6、fixture可以多层嵌套，但是使用fixture的testcase的返回值，只看当前函数使用的fixture的返回值
+
 
 
 

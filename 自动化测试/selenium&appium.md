@@ -805,4 +805,4 @@ driver.execute_script("document.getElementById('baidu').click()")
 
 ​	2）优化各种等待时间
 
-还是有限用1、2这俩方法，调case能优化的空间是有限的
+还是优先用1、2这俩方法，调case能优化的空间是有限的
